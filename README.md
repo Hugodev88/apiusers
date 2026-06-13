@@ -208,4 +208,3 @@ Para dúvidas ou sugestões, entre em contato com o desenvolvedor.
 ## 📄 Licença
 
 ISC
-a

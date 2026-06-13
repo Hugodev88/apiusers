@@ -1,27 +1,32 @@
-import { prisma } from "../config/prisma";
+import { UserRepository } from "../repositories/userRepository"
 
-export const getUsers = async (req: any, res: any) => {
-    const users = await prisma.user.findMany({
-        select: {
-            id: true,
-            name: true, 
-            email: true
-        }
-    });
-    return res.json(users)
+const repo = new UserRepository()
+
+export const listUsers = async (req: any, res: any) => {
+  const users = await repo.findAll()
+  return res.json(users)
 }
 
 export const me = async (req: any, res: any) => {
-    const userId = req.auth.userId;
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId
-        }, 
-        select: {
-            id: true,
-            name: true, 
-            email: true
-        }
-    })
-    return res.json(user);
-};
+  const userId = req.auth?.userId
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+
+  const user = await repo.findById(userId)
+
+  return res.json(user)
+}
+
+export const getUserById = async (req: any, res: any) => {
+  const { id } = req.params
+
+  const user = await repo.findById(id)
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" })
+  }
+
+  return res.json(user)
+}
